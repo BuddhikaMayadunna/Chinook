@@ -63,7 +63,7 @@ namespace Chinook.Services
                 return $"Select track cannot be null";
 
             var data  = DbContext.Tracks.Where(a => a.Album.ArtistId == artist.ArtistId);
-            //.Playlists.AddAsync();
+            //DbContext..AddAsync(new  {  })
             return $"Track {artist.Name} - {selectedTrack.AlbumTitle} - {selectedTrack.TrackName} added to playlist {{playlist name}}.";
         }
     }

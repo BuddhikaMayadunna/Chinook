@@ -1,12 +1,43 @@
-﻿using Chinook.ClientModels;
-using Chinook.Models;
+﻿using Chinook.Models;
 
 namespace Chinook.Services
 {
+    /// <summary>
+    /// The artist service interface.
+    /// </summary>
     public interface IArtistService
     {
-        Task<Artist?> GetArtistAsync(long artistId);
-        Task<List<Album>> GetAlbumsForArtistAsync(int artistId);
+        /// <summary>
+        /// Get the artist list.
+        /// </summary>
+        /// <returns>The artist list.</returns>
         Task<List<Artist>> GetArtistsAsync();
+        /// <summary>
+        /// Get the artist.
+        /// </summary>
+        /// <param name="artistId">The artist id</param>
+        /// <returns>The artist.</returns>
+        Task<Artist?> GetArtistsAsync(long artistId);
+
+        /// <summary>
+        /// Get The albums for the artist.
+        /// </summary>
+        /// <param name="artistId">The artist id.</param>
+        /// <returns>The album list.</returns>
+        Task<List<Album>> GetAlbumsForArtistAsync(int artistId);
+
+        /// <summary>
+        /// Get the artist list.
+        /// </summary>
+        /// <param name="artistName">The artist name.</param>
+        /// <returns>The artist list.</returns>
+        Task<List<Artist>> GetArtistsAsync(string artistName);
+
+        /// <summary>
+        /// Create playlist.
+        /// </summary>
+        /// <param name="playlist">The playlist</param>
+        /// <returns>The create playlist status.</returns>
+        Task CreatePlaylistAsync(ClientModels.Playlist playlist);
     }
 }

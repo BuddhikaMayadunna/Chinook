@@ -64,35 +64,24 @@ else
     [Inject] IDbContextFactory<ChinookContext> DbFactory { get; set; }
     [Inject] IArtistService ArtistService { get; set; }
     [Inject] ITrackService TrackService { get; set; }
+    [Inject] IPlaylistService PlaylistService { get; set; }
     private Modal PlaylistDialog { get; set; }
 
     private Artist? Artist;
     private List<PlaylistTrack> Tracks;
+    private List<ClientModels.Playlist> ExistingPlaylist;
     private DbContext DbContext;
     private PlaylistTrack? SelectedTrack;
-    private string InfoMessage;
-    private string CurrentUserId;
+    private string? InfoMessage;
+    private string? CurrentUserId;
 
     protected override async Task OnInitializedAsync()
     {
         await InvokeAsync(StateHasChanged);
         CurrentUserId = await GetUserId();
-        //var DbContext = await DbFactory.CreateDbContextAsync();
-        //Artist = DbContext.Artists.SingleOrDefault(a => a.ArtistId == ArtistId);
 
-        Artist = await ArtistService.GetArtistAsync(ArtistId);
-        Tracks =  TrackService.GetPlaylistTracks(CurrentUserId, ArtistId);
-
-        // Tracks = DbContext.Tracks.Where(a => a.Album.ArtistId == ArtistId)
-        //     .Include(a => a.Album)
-        //     .Select(t => new PlaylistTrack()
-        //         {
-        //             AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
-        //             TrackId = t.TrackId,
-        //             TrackName = t.Name,
-        //             IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == CurrentUserId && up.Playlist.Name == "Favorites")).Any()
-        //         })
-        //     .ToList();
+        Artist = await ArtistService.GetArtistsAsync(ArtistId);
+        Tracks = TrackService.GetPlaylistTracks(CurrentUserId, ArtistId);
     }
 
     private async Task<string> GetUserId()
@@ -112,10 +101,11 @@ else
         InfoMessage = TrackService.UnfavoriteTrack(trackId);
     }
 
-    private void OpenPlaylistDialog(long trackId)
+    private async Task OpenPlaylistDialog(long trackId)
     {
         CloseInfoMessage();
-        SelectedTrack = TrackService.GetTrackById( trackId);
+        SelectedTrack = TrackService.GetTrackById(trackId);
+        ExistingPlaylist = await PlaylistService.GetPlaylistsAsync(CurrentUserId);
         PlaylistDialog.Open();
     }
 
@@ -148,11 +138,22 @@ else
 
         <div class="form-group mb-2">
             <label for="ExistingPlaylist">Add to existing playlist</label>
-            <select class="form-control" id="ExistingPlaylist">
+            <select class="form-control" id="ExistingPlaylist" >
                 <option>Playlist 1</option>
                 <option>Playlist 2</option>
                 <option>Playlist 3</option>
             </select>
+
+            @* @if (ExistingPlaylist != null)
+            {
+            <select class="form-control" title="Region is required ">
+            <option value="Select" selected disabled="disabled">(Choose Region)</option>
+            @foreach (var playlist in @ExistingPlaylist)
+            {
+            <option value="@playlist.PlaylistId"> @playlist.Name</option>
+            }
+            </select>
+            } *@
         </div>
         <div class="form-group mb-2">
             <label for="NewPlaylist">Create new playlist</label>

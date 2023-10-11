@@ -8,7 +8,12 @@
 <PageTitle>Index</PageTitle>
 
 <h1>Artists</h1>
-
+<div class="form-group mb-2">
+    <input type="text" id="ArtistName" class="form-control" placeholder="Search for Artists" @bind="@searchText">
+    <button class="btn-primary" @onclick="searchArtists">
+        Search
+    </button>
+</div>
 @if (Artists == null)
 {
     <Loading />
@@ -35,13 +40,20 @@ else
 }
 
 @code {
-    
+
     [Inject] IArtistService ArtistService { get; set; }
     private List<Artist>? Artists;
+    private string searchText = string.Empty;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         await InvokeAsync(StateHasChanged);
         Artists = await GetArtists();
+    }
+
+    async void searchArtists()
+    {
+        Artists = await ArtistService.GetArtistsAsync(searchText);
     }
 
     public async Task<List<Artist>> GetArtists()
