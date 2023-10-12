@@ -32,12 +32,5 @@ namespace Chinook.Services
         /// <param name="artistName">The artist name.</param>
         /// <returns>The artist list.</returns>
         Task<List<Artist>> GetArtistsAsync(string artistName);
-
-        /// <summary>
-        /// Create playlist.
-        /// </summary>
-        /// <param name="playlist">The playlist</param>
-        /// <returns>The create playlist status.</returns>
-        Task CreatePlaylistAsync(ClientModels.Playlist playlist);
     }
 }

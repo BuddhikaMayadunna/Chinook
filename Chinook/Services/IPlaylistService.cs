@@ -20,5 +20,11 @@
         /// <returns>The playlists.</returns>
         Task<List<ClientModels.Playlist>?> GetPlaylistsAsync(string currentUserId);
 
+        /// <summary>
+        /// Create playlist.
+        /// </summary>
+        /// <param name="playlist">The playlist</param>
+        /// <returns>The create playlist status.</returns>
+        //Task CreatePlaylistAsync(ClientModels.Playlist playlist);
     }
 }

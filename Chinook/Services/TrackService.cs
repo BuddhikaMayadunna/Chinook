@@ -4,17 +4,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chinook.Services
 {
+    /// <summary>
+    /// The track service.
+    /// </summary>
     public class TrackService : ITrackService
     {
-
+        /// <summary>
+        /// The playlist tracks list.
+        /// </summary>
         private List<PlaylistTrack>? Tracks;
+
+        /// <summary>
+        /// The database context.
+        /// </summary>
         private readonly ChinookContext DbContext;
 
+        /// <summary>
+        /// The track service.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
         public TrackService(ChinookContext dbContext)
         {
             this.DbContext = dbContext;
         }
 
+        /// <summary>
+        /// Set the favorite track.
+        /// </summary>
+        /// <param name="trackId">The track id.</param>
+        /// <returns>The status.</returns>
         public string FavoriteTrack(long trackId)
         {
             var track = Tracks?.FirstOrDefault(t => t.TrackId == trackId);
@@ -43,18 +61,35 @@ namespace Chinook.Services
             return Tracks;
         }
 
+        /// <summary>
+        /// Set the unfavorite track.
+        /// </summary>
+        /// <param name="trackId">The track id.</param>
+        /// <returns>The status.</returns>
         public string UnfavoriteTrack(long trackId)
         {
             var track = Tracks?.FirstOrDefault(t => t.TrackId == trackId);
             return $"Track {track?.ArtistName} - {track?.AlbumTitle} - {track?.TrackName} removed from playlist Favorites.";
         }
 
+        /// <summary>
+        /// Get the track by id.
+        /// </summary>
+        /// <param name="trackId">The track id.</param>
+        /// <returns>The playlist tracks.</returns>
         public PlaylistTrack? GetTrackById(long trackId)
         {
             return Tracks?.FirstOrDefault(t => t.TrackId == trackId);
         }
 
-        public string AddTrackToPlaylist(Artist? artist, PlaylistTrack? selectedTrack)
+        /// <summary>
+        /// Add tracks to playlist.
+        /// </summary>
+        /// <param name="artist">The artist.</param>
+        /// <param name="selectedTrack">The selected track.</param>
+        /// <param name="newPlaylist">the new playlist.</param>
+        /// <returns>The status.</returns>
+        public async Task<string> AddTrackToPlaylist(Artist? artist, PlaylistTrack? selectedTrack, string newPlaylist)
         {
             if (artist is null)
                 return $"Artist cannot be null";
@@ -62,9 +97,31 @@ namespace Chinook.Services
             if (selectedTrack is null)
                 return $"Select track cannot be null";
 
-            var data  = DbContext.Tracks.Where(a => a.Album.ArtistId == artist.ArtistId);
-            //DbContext..AddAsync(new  {  })
-            return $"Track {artist.Name} - {selectedTrack.AlbumTitle} - {selectedTrack.TrackName} added to playlist {{playlist name}}.";
+            var tracks = new List<Track>();
+          
+            var newTrack = new Track();
+            newTrack.TrackId = selectedTrack.TrackId;
+            newTrack.Name = selectedTrack.TrackName;
+            newTrack.UnitPrice = Array.Empty<byte>();
+
+            var album = await DbContext.Albums.FirstOrDefaultAsync(p => p.Title == selectedTrack.AlbumTitle);
+            if (album != null)
+            {
+                newTrack.AlbumId = album.AlbumId;
+            }
+           // tracks.Add(newTrack);
+
+            var newPlayList = new Models.Playlist()
+            {
+                Name = newPlaylist,
+                //need to check the unique constraint
+                //Tracks = new List<Track> { newTrack }
+            };
+            var state = await DbContext.Playlists.AddAsync(newPlayList);
+            await DbContext.SaveChangesAsync();
+
+            return $"Track {artist.Name} - {selectedTrack.AlbumTitle} - {selectedTrack.TrackName} added to playlist " +
+                $"{newPlaylist}.";
         }
     }
 }

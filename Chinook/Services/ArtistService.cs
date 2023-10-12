@@ -60,27 +60,5 @@ namespace Chinook.Services
         {
             return await DbContext.Artists.SingleOrDefaultAsync(a => a.ArtistId == artistId);
         }
-
-
-        public async Task CreatePlaylistAsync(ClientModels.Playlist playlist)
-        {
-            var tracks = new List<Track>();
-            foreach (var track in playlist.Tracks)
-            {
-                var newTrack = new Track();
-                newTrack.TrackId = track.TrackId;
-                newTrack.Name = track.TrackName;
-
-                var album = await DbContext.Albums.FirstOrDefaultAsync(p => p.Title == track.AlbumTitle);
-                if (album != null)
-                {
-                    newTrack.AlbumId = album.AlbumId;
-                }
-                tracks.Add(newTrack);
-            }
-            var newPlayList = new Models.Playlist() { Name = playlist.Name, Tracks = tracks };
-            var state = await DbContext.Playlists.AddAsync(newPlayList);
-            await DbContext.SaveChangesAsync();
-        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Chinook.ClientModels;
+using Chinook.Models;
 using Microsoft.EntityFrameworkCore;
+using Playlist = Chinook.ClientModels.Playlist;
 
 namespace Chinook.Services
 {
@@ -28,12 +30,12 @@ namespace Chinook.Services
         /// <param name="currentUserId">The current user id.</param>
         /// <param name="playlistId">The play list id.</param>
         /// <returns>The playlist.</returns>
-        public async Task<Playlist?> GetPlaylistAsync(string currentUserId, long playlistId)
+        public async Task<ClientModels.Playlist?> GetPlaylistAsync(string currentUserId, long playlistId)
         {
             var playlist = await DbContext.Playlists
             .Include(a => a.Tracks).ThenInclude(a => a.Album).ThenInclude(a => a.Artist)
             .Where(p => p.PlaylistId == playlistId)
-            .Select(p => new Playlist()
+            .Select(p => new ClientModels.Playlist()
             {
                 Name = p.Name,
                 Tracks = p.Tracks.Select(t => new PlaylistTrack()

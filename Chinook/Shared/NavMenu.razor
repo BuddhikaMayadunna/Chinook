@@ -19,15 +19,16 @@
         </div>
         <div class="nav-item px-3">
 
-            <NavLink class="nav-link" href="playlist/playlistnumber">
+            <NavLink class="nav-link" href="playlist/1">
                 <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
             </NavLink>
 
             @foreach (var playlist in Playlists)
             {
+                var link = "playlist/" + @playlist.PlaylistId;
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="playlist/2">
-                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name @playlist.PlaylistId
+                    <NavLink class="nav-link" href="@link">
+                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name 
                     </NavLink>
                 </div>
             }

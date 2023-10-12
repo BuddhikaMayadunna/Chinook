@@ -74,6 +74,7 @@ else
     private PlaylistTrack? SelectedTrack;
     private string? InfoMessage;
     private string? CurrentUserId;
+    private string? newPlaylist;
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,14 +106,14 @@ else
     {
         CloseInfoMessage();
         SelectedTrack = TrackService.GetTrackById(trackId);
-        ExistingPlaylist = await PlaylistService.GetPlaylistsAsync(CurrentUserId);
+        ExistingPlaylist = await PlaylistService.GetPlaylistsAsync(CurrentUserId!);
         PlaylistDialog.Open();
     }
 
-    private void AddTrackToPlaylist()
+    private async void AddTrackToPlaylist()
     {
         CloseInfoMessage();
-        InfoMessage = TrackService.AddTrackToPlaylist(Artist, SelectedTrack);
+        InfoMessage = await TrackService.AddTrackToPlaylist(Artist, SelectedTrack, newPlaylist!);
         PlaylistDialog.Close();
     }
 
@@ -138,26 +139,20 @@ else
 
         <div class="form-group mb-2">
             <label for="ExistingPlaylist">Add to existing playlist</label>
-            <select class="form-control" id="ExistingPlaylist" >
-                <option>Playlist 1</option>
-                <option>Playlist 2</option>
-                <option>Playlist 3</option>
-            </select>
-
-            @* @if (ExistingPlaylist != null)
+            @if (ExistingPlaylist != null)
             {
-            <select class="form-control" title="Region is required ">
-            <option value="Select" selected disabled="disabled">(Choose Region)</option>
-            @foreach (var playlist in @ExistingPlaylist)
-            {
-            <option value="@playlist.PlaylistId"> @playlist.Name</option>
+                <select class="form-control" title="Region is required ">
+                <option value="Select" selected disabled="disabled">Choose Playlist</option>
+                @foreach (var playlist in @ExistingPlaylist)
+                {
+                    <option value="@playlist.PlaylistId"> @playlist.Name</option>
+                }
+                </select>
             }
-            </select>
-            } *@
         </div>
         <div class="form-group mb-2">
             <label for="NewPlaylist">Create new playlist</label>
-            <input type="text" id="NewPlaylist" class="form-control" placeholder="Name for the new playlist">
+            <input type="text" id="NewPlaylist" class="form-control" placeholder="Name for the new playlist" @bind="@newPlaylist">
         </div>
     </Body>
     <Footer>
